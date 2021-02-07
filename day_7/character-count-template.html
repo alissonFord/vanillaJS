@@ -35,7 +35,7 @@
 			const textArea = document.getElementById("text");
 			const count = document.getElementById("character-count");
 			let counted = text.value.length;
-			count.innerHTML = counted;
+			count.textContent = counted;
 		}
 
 		document.addEventListener('keydown', countCharacters);
