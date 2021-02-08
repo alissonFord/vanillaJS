@@ -31,14 +31,12 @@
 	<p>You've written <strong><span id="character-count">0</span> characters</strong>.</p>
 
 	<script>
-		function countCharacters() {
-			const textArea = document.getElementById("text");
-			const count = document.getElementById("character-count");
-			let counted = text.value.length;
-			count.textContent = counted;
-		}
+		const textArea = document.getElementById("text");
+		const characterCount = document.getElementById("character-count");
 
-		document.addEventListener('keydown', countCharacters);
+		textArea.addEventListener('input', function() {
+			characterCount.textContent = textArea.value.length;
+		});
 
 	</script>
 </body>
