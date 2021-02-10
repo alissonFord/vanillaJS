@@ -37,7 +37,7 @@
 
 		textArea.addEventListener("input", function() {
 			charCount.textContent = textArea.value.length;
-			wordCount.textContent = textArea.value.split(' ').filter(function(word) {
+			wordCount.textContent = textArea.value.split(/[\n\r\s]+/g).filter(function(word) {
 				return word.length > 0;
 			}).length;
 		})
