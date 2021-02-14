@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Random Ron</title>
+
+	<style type="text/css">
+		body {
+			margin: 1em auto;
+			max-width: 40em;
+			width: 88%;
+		}
+	</style>
+</head>
+<body>
+
+	<h1>Random Ron</h1>
+
+	<blockquote></blockquote>
+
+	<p>
+		<button>More Ron</button>
+	</p>
+
+	<script>
+		const blockquote = document.querySelector('blockquote');
+		const button = document.querySelector('button');
+
+		function getQuote() { 
+			fetch('https://ron-swanson-quotes.herokuapp.com/v2/quotes').then(function(response) {
+				if (response.ok) {
+					return response.json();
+				}
+				else {
+					return Promise.reject(response);
+				}
+			}).then(function(quote) {
+				blockquote.innerHTML = quote;
+			}).catch(function(err) {
+				console.warn(err);
+				});
+		}
+
+		getQuote();
+		button.addEventListener('click', getQuote);
+	</script>
+</body>
+</html>
