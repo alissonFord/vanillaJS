@@ -34,7 +34,7 @@
 					return Promise.reject(response);
 				}
 			}).then(function(quote) {
-				blockquote.innerHTML = quote;
+				blockquote.textContent = quote;
 			}).catch(function(err) {
 				console.warn(err);
 				});
