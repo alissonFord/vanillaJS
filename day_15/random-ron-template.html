@@ -36,10 +36,10 @@
 				}
 			}).then(function(quote) {
 				if(quotesArray.length > 50) {
-					quotesArray.shift();
+					quotesArray = [];
 				}
+
 				if(quotesArray.indexOf(quote) === -1) {
-					console.log('quote: ' + quote);
 					quotesArray.push(quote);
 					blockquote.textContent = quote;
 				}
@@ -51,7 +51,6 @@
 			}).catch(function(err) {
 				console.warn(err);
 			});
-			console.log(quotesArray);
 		}
 
 		getQuote();
