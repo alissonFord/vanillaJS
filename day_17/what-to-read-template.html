@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>What to read today</title>
+
+	<style type="text/css">
+		body {
+			margin: 1em auto;
+			max-width: 40em;
+			width: 88%;
+		}
+	</style>
+</head>
+<body>
+
+	<h1>What to read today</h1>
+
+	<div id="app"></div>
+
+	<script>
+		const api = 'https://api.nytimes.com/svc/movies/v2/reviews/picks.json?api-key=GKnEbysBnWjOmwvMEwNrGwwLOVN50Aze';
+		const app = document.getElementById("app");
+
+		fetch(api).then(function(response) {
+			if(response.ok) {
+				return response.json();
+			}
+			else {
+				Promise.reject(response);
+			}
+		}).then(function(reviews) {
+			console.log()
+			render(reviews.results);
+		}).catch(function(err) {
+			console.warn(err);
+		})
+		
+
+		function render(reviews) {
+			app.innerHTML = reviews.map(function(review) {
+				var html = `<article>
+					<h3> ${review.headline} </h3>
+				 	<h4> ${review.byline} </h4>
+				 	<p> ${review.summary_short}</p>
+				 	<a href="${review.link.url}">${review.link.suggested_link_text}</a>
+				 </article>`
+				return html;
+			}).join('');
+		}
+
+
+	</script>
+</body>
+</html>
