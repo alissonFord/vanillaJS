@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>What to read today</title>
+
+	<style type="text/css">
+		body {
+			margin: 1em auto;
+			max-width: 40em;
+			width: 88%;
+		}
+	</style>
+</head>
+<body>
+
+	<h1>What to read today</h1>
+	<div id="app"></div>
+
+	<script>
+		const api_key = 'GKnEbysBnWjOmwvMEwNrGwwLOVN50Aze';
+		const app = document.getElementById("app");
+		const categories = ['movies', 'books', 'science', 'travel', 'technology'];
+		var html = '';
+
+		async function fetchNews(category) {
+			try {
+				const response = await fetch(`https://api.nytimes.com/svc/topstories/v2/${category}.json?api-key=${api_key}`);
+				if(response.ok) {
+					const news = await response.json();
+					render(news.results, category);
+				}
+			}
+			catch(err) {
+				console.warn(err);
+			}
+
+		}
+
+		function render(news, category) {
+			app.innerHTML += `<h2>${category}</h2>` + news.slice(0,5).map(function(info) {
+				const html = '<article><a href=' + sanitizeHTML(info.url) + '>' + sanitizeHTML(info.title) + '</a>' +
+				 	'<h4>'+ sanitizeHTML(info.byline) + '</h4>' +
+					'<p>' + sanitizeHTML(info.abstract) + '</p>' +
+				 '</article>';
+				return html;
+			}).join('');
+		}
+
+		var sanitizeHTML = function (str) {
+			return str.replace(/[^\w. ]/gi, function (c) {
+				return '&#' + c.charCodeAt(0) + ';';
+			});
+		};
+
+		categories.forEach(fetchNews);
+
+	</script>
+</body>
+</html>
