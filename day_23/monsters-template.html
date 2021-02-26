@@ -108,7 +108,7 @@
 			var shuffledMonsters = shuffle(monsters.slice());
 			app.innerHTML = `<div class='row'>` + shuffledMonsters.map(function(monster) {
 				var html = `<div class="grid">
-					<img src='${monster}.svg'>
+					<img src='${monster}.svg' alt='${monster}'>
 					</div>`;
 				return html;
 			}).join('') + `</div>`;
