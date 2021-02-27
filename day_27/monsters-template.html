@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Monsters!</title>
+
+	<style type="text/css">
+		body {
+			margin: 1em auto;
+			max-width: 40em;
+			width: 88%;
+		}
+
+		h1 {
+			text-align: center;
+		}
+		/**
+		 * A simple grid layout
+		 */
+		.row {
+			display: grid;
+			grid-template-columns: auto auto auto;
+			text-align: center;
+		}
+
+		.grid {
+			min-height: 6em;
+			padding: 1em;
+		}
+
+		[monster-id] {
+			background: transparent;
+			border: 0;
+		}
+
+		/**
+		 * Make sure images scale
+		 */
+		img {
+			height: auto;
+			max-width: 100%;
+		}
+
+		#shuffle {
+			padding: 10px;
+			display: block;
+			margin:auto;
+			background-color: #c74141;
+			color:aliceblue;
+			border-radius: 5%;
+			font-size: 1rem;
+			border: 0;
+		}
+
+
+		footer {
+			margin-top: 15px;
+		}
+	</style>
+</head>
+<body>
+
+	<h1>Monsters!</h1>
+
+	<div id="app"></div>
+	<button id="shuffle">Shuffle monsters!</button>
+
+	<footer>
+		<hr>
+		<p class="text-small text-muted">Icons by <a href="https://thenounproject.com/term/door/311732/">Jamie Dickinson</a>, <a href="https://thenounproject.com/term/monster/184225/">Nicky Knicky</a>, <a href="https://thenounproject.com/term/monster/1510400/">Alvaro Cabrera</a>, <a href="https://thenounproject.com/term/monster/28460/">Eliricon</a>, <a href="https://thenounproject.com/term/monster/82823/">April Yang</a>, <a href="https://thenounproject.com/term/monster/1062009/">tk66</a>, <a href="https://thenounproject.com/term/monster/24990/">Alex WaZa</a>, <a href="https://thenounproject.com/term/monster/37212/">Husein Aziz</a>, <a href="https://thenounproject.com/term/monster/2236082">iconcheese</a>, and <a href="https://thenounproject.com/term/socks/38451/">Yazmin Alanis</a>.</p>
+	</footer>
+
+	<script>
+		const app = document.getElementById('app');
+		const button = document.getElementById('shuffle');
+
+		// The monsters and socks
+		var monsters = [
+			'monster1',
+			'monster2',
+			'monster3',
+			'monster4',
+			'monster5',
+			'monster6',
+			'monster7',
+			'monster8',
+			'monster9',
+			'monster10',
+			'monster11',
+			'sock'
+		];
+
+		shuffledMonsters = [];
+
+		/**
+		 * Randomly shuffle an array
+		 * https://stackoverflow.com/a/2450976/1293256
+		 * @param  {Array} array The array to shuffle
+		 * @return {String}      The first item in the shuffled array
+		 */
+		 var shuffle = function (array) {
+
+			var currentIndex = array.length;
+			var temporaryValue, randomIndex;
+
+			// While there remain elements to shuffle...
+			while (0 !== currentIndex) {
+				// Pick a remaining element...
+				randomIndex = Math.floor(Math.random() * currentIndex);
+				currentIndex -= 1;
+
+				// And swap it with the current element.
+				temporaryValue = array[currentIndex];
+				array[currentIndex] = array[randomIndex];
+				array[randomIndex] = temporaryValue;
+			}
+
+			return array;
+		};
+
+		function displayCoveredMonsters() {
+			shuffledMonsters = shuffle(monsters.slice());
+			app.innerHTML = `<div class='row'>` + shuffledMonsters.map(function(monster, id) {
+				console.log(monster + ' ' + id);
+				var html = `<div class="grid">
+					<button monster-id='${id}'>
+						<img src='door.svg' alt='${id}'>
+					</button>
+				</div>`;
+				return html;
+				console.log(html);
+			}).join('') + `</div>`;
+			
+		}
+
+		function revealMonster() {
+			let monsterBtn = event.target.closest('[monster-id]');
+
+			if(!monsterBtn) return;
+
+			let id = monsterBtn.getAttribute('monster-id');
+			let monster = shuffledMonsters[id];
+			monsterBtn.parentNode.innerHTML = `<img alt='${monster}' src='${monster}.svg'>`;
+
+			if(monster === 'sock') {
+				var btns = document.querySelectorAll('[monster-id]');
+				btns.forEach(btn => btn.disabled = true);
+			}	
+		}
+
+		displayCoveredMonsters();
+		document.addEventListener('click', revealMonster);
+		button.addEventListener('click', displayCoveredMonsters);
+	</script>
+</body>
+</html>
