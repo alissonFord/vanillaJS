@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Weather App</title>
+
+	<style type="text/css">
+		body {
+			margin: 1em auto;
+			max-width: 30em;
+			width: 88%;
+		}
+	</style>
+</head>
+<body>
+
+	<h1>Weather App</h1>
+
+	<div id="app">Checking the weather near you...</div>
+
+	<script>
+		const app = document.getElementById('app');
+		const apiLocation = 'https://ipapi.co/json/';
+		const apiWeather = 'https://api.weatherbit.io/v2.0/current';
+		const API_KEY = '769137b43aaa452993e3f7d18cd2260b';
+		//'https://api.weatherbit.io/v2.0/current?city_id=krakow&key=769137b43aaa452993e3f7d18cd2260b'
+
+		var post;
+		var city;
+		var temp;
+
+		var getWeatherInfo = function () {
+			fetch(apiLocation).then(function (response) {
+			if (response.ok) {
+				return response.json();
+			} else {
+				return Promise.reject(response);
+			}
+			}).then(function (data) {
+				post = data;
+				city = data.city;
+				console.log(city);
+				return fetch (apiWeather + `?city=${data.city}&key=${API_KEY}`);
+			}).then(function (response) {
+				if (response.ok) {
+					return response.json();
+				} else {
+					return Promise.reject(response);
+				}
+			}).then(function (userData) {
+				temp = userData.data[0].temp;
+				app.innerHTML = '<p> In ' + city + ' there is ' + temp +  '&#8451;' + ' and ' + celciusToFarenheit(temp) + '&#8457;' + '</p>';
+			}).catch(function(err) {
+				console.warn(err);
+			});
+		}
+
+		getWeatherInfo();
+	
+		function celciusToFarenheit(temperature) {
+			return ((temperature - 32) * 5 / 9).toFixed(2);
+		}
+
+		function farenheitToCelsius(temperature) {
+			return (temperature * 9 / 5) + 32;
+		}
+
+	</script>
+</body>
+</html>
