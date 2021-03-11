@@ -24,37 +24,31 @@
 		const API_KEY = '769137b43aaa452993e3f7d18cd2260b';
 		//'https://api.weatherbit.io/v2.0/current?city_id=krakow&key=769137b43aaa452993e3f7d18cd2260b'
 
-		var post;
 		var city;
 		var temp;
 
-		var getWeatherInfo = function () {
-			fetch(apiLocation).then(function (response) {
+		fetch(apiLocation).then(function (response) {
+		if (response.ok) {
+			return response.json();
+		} else {
+			return Promise.reject(response);
+		}
+		}).then(function (data) {
+			city = data.city;
+			console.log(city);
+			return fetch (apiWeather + `?city=${data.city}&key=${API_KEY}`);
+		}).then(function (response) {
 			if (response.ok) {
 				return response.json();
 			} else {
 				return Promise.reject(response);
 			}
-			}).then(function (data) {
-				post = data;
-				city = data.city;
-				console.log(city);
-				return fetch (apiWeather + `?city=${data.city}&key=${API_KEY}`);
-			}).then(function (response) {
-				if (response.ok) {
-					return response.json();
-				} else {
-					return Promise.reject(response);
-				}
-			}).then(function (userData) {
-				temp = userData.data[0].temp;
-				app.innerHTML = '<p> In ' + city + ' there is ' + temp +  '&#8451;' + ' and ' + celciusToFarenheit(temp) + '&#8457;' + '</p>';
-			}).catch(function(err) {
-				console.warn(err);
-			});
-		}
-
-		getWeatherInfo();
+		}).then(function (userData) {
+			temp = userData.data[0].temp;
+			app.innerHTML = '<p> In ' + city + ' there is ' + temp +  '&#8451;' + ' and ' + celciusToFarenheit(userData.data[0].temp) + '&#8457;' + '</p>';
+		}).catch(function(err) {
+			console.warn(err);
+		});
 	
 		function celciusToFarenheit(temperature) {
 			return ((temperature - 32) * 5 / 9).toFixed(2);
