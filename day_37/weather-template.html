@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Weather App</title>
+
+	<style type="text/css">
+		body {
+			margin: 1em auto;
+			max-width: 30em;
+			width: 88%;
+		}
+	</style>
+</head>
+<body>
+
+	<h1>Weather App</h1>
+
+	<div id="app">Checking the weather near you...</div>
+
+	<script>
+		const app = document.getElementById('app');
+		const apiLocation = 'https://ipapi.co/json/';
+		const apiWeather = 'https://api.weatherbit.io/v2.0/current';
+		const API_KEY = '769137b43aaa452993e3f7d18cd2260b';
+		//'https://api.weatherbit.io/v2.0/current?city_id=krakow&key=769137b43aaa452993e3f7d18cd2260b'
+
+		var post;
+		var city;
+		var temp;
+		var icon;
+
+		var createWeatherInfo = function(options) {
+
+			var defaults = {
+				apiKey: null,
+				selector: '#app',
+				toConvert: true,
+				showIcon: true,
+				description: 'It is currently {{temp}} degrees and {{conditions}} in {{city}}.',
+				noWeather: 'Unable to get weather data at this time. Sorry!',
+			}
+
+			var settings = Object.assign(defaults, options);
+			var weatherInfo = document.querySelector(settings.selector);
+
+			if(!settings.apiKey) {
+				console.warn('Please provide your api key!');
+				return;
+			}
+
+			var cToF = function(temp) {
+				console.log(temp);
+				if(settings.toConvert) {
+					temp = (temp - 32) * 5 / 9;
+					return temp.toFixed(2);
+				}
+				return temp;
+			};
+
+			var getIcon = function(weather) {
+				if(!settings.showIcon) return '';
+
+				let html = `<div>
+						<img src="https://www.weatherbit.io/static/img/icons/${weather.weather.icon}.png">
+					</div>`;
+
+				return html;
+			}
+
+			var getDescription = function(weather) {
+				return settings.description.replace('{{temp}}', cToF(weather.temp))
+						.replace('{{conditions}}', weather.weather.description.toLowerCase())
+						.replace('{{city}}', weather.city_name);
+			}
+
+			var renderWeatherInfo = function(weather) {
+				weatherInfo.innerHTML = getIcon(weather) + `<p>${getDescription(weather)}</p>`;
+			}
+
+
+			fetch(apiLocation).then(function (response) {
+				if (response.ok) {
+					return response.json();
+				} else {
+					return Promise.reject(response);
+				}
+				}).then(function (data) {
+					return fetch (apiWeather + `?city=${data.city}&key=${settings.apiKey}`);
+				}).then(function (response) {
+					if (response.ok) {
+						return response.json();
+					} else {
+						return Promise.reject(response);
+					}
+				}).then(function (userData) {
+					renderWeatherInfo(userData.data[0]);
+				}).catch(function(err) {
+					console.warn(err);
+				});
+			}
+
+			createWeatherInfo({apiKey: API_KEY, selector: '#app', toConvert: true, showIcon: true, description: 'It is currently {{temp}} degrees and {{conditions}} in {{city}}.'});
+
+	</script>
+</body>
+</html>
