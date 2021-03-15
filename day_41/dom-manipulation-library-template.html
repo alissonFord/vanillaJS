@@ -57,7 +57,7 @@
 			}
 
 			Constructor.prototype.addNewClass = function(className) {
-				return this.getAllElements().forEach(elem => {
+				this.getAllElements().forEach(elem => {
 					if(!elem.classList.contains(className)) {
 						elem.classList.add(className);
 					}
@@ -65,7 +65,7 @@
 			}
 
 			Constructor.prototype.removeClass = function(className) {
-				return this.getAllElements().forEach(elem => {
+				this.getAllElements().forEach(elem => {
 					if(elem.classList.contains(className)) {
 					 elem.classList.remove(className);
 					}
