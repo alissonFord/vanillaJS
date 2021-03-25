@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>API Cache</title>
+
+	<style type="text/css">
+		body {
+			margin: 1em auto;
+			max-width: 40em;
+			width: 88%;
+		}
+	</style>
+</head>
+<body>
+
+	<h1>API Cache</h1>
+	<p><em><strong>The Scuttlebutt</strong>&mdash;the number one source for pirate news!</em></p>
+
+	<div id="app">
+		Loading...
+	</div>
+
+	<script>
+		const app = document.getElementById('app');
+		const api = 'https://vanillajsacademy.com/api/pirates.json';
+		const storageId = 'pirates-articles';
+
+		var news = {
+			titles: [],
+			blurbs: [],
+			timestamp: new Date().getTime()
+		};
+
+		async function getArticles() {
+			await fetch(api).then(function (response) {
+			if (response.ok) {
+				return response.json();
+			} else {
+				return Promise.reject(response);
+			}
+			}).then(function (data) {
+				data.articles.forEach(function(article, index) { news.titles[index] = article.title});
+				data.articles.forEach(function(article, index) { news.blurbs[index] = article.article});
+				localStorage.setItem(storageId, JSON.stringify(news));
+				renderNews(news);
+			}).catch(function(err) {
+				console.warn(err);
+			});
+		}
+
+
+		function renderNews(data) {
+			app.innerHTML = news.titles.map(function(title, i)  {
+				var html = `<article> 
+								<h3> ${title}</h3>
+								<p> ${news.blurbs[i]}</p>
+							</article>`
+				return html;
+			}).join('');
+		}
+
+		function isDataValid(savedData, storageTime) {
+			if (!savedData.timestamp) return;
+
+			var getTimeDifference = new Date().getTime() - savedData.timestamp;
+			
+			return getTimeDifference  < storageTime;
+		}
+
+		function getNewsUpdate() {
+			var saved = JSON.parse(localStorage.getItem(storageId));
+
+			if (!isDataValid(saved, 1000 * 60)) {
+				localStorage.removeItem(storageId);
+				getArticles();
+			}
+			else {
+				renderNews(saved);
+			}
+		}
+
+		getArticles();
+		getNewsUpdate();
+
+	</script>
+</body>
+</html>
