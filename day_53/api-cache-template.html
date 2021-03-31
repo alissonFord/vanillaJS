@@ -25,35 +25,44 @@
 		const api = 'https://vanillajsacademy.com/api/pirates.json';
 		const storageId = 'pirates-articles';
 
-		var news = {
-			titles: [],
-			blurbs: [],
-			timestamp: new Date().getTime()
-		};
+		function getArticles() {
 
-		async function getArticles() {
-			await fetch(api).then(function (response) {
+			let saved = getNewsUpdate();
+			if(saved) {
+				getNewsUpdate(saved);
+				return;
+			}
+
+
+			fetch(api).then(function (response) {
 			if (response.ok) {
 				return response.json();
 			} else {
 				return Promise.reject(response);
 			}
 			}).then(function (data) {
-				data.articles.forEach(function(article, index) { news.titles[index] = article.title});
-				data.articles.forEach(function(article, index) { news.blurbs[index] = article.article});
-				localStorage.setItem(storageId, JSON.stringify(news));
-				renderNews(news);
+				saveData(data);
+				renderNews(data);
 			}).catch(function(err) {
 				console.warn(err);
 			});
 		}
 
+		function saveData(data) {
+			let news = {
+				article: data,
+				timestamp: new Date().getTime()
+			};
+
+			localStorage.setItem(storageId, JSON.stringify(news));
+		}
+
 
 		function renderNews(data) {
-			app.innerHTML = news.titles.map(function(title, i)  {
+			app.innerHTML = data.articles.map(function(article)  {
 				var html = `<article> 
-								<h3> ${title}</h3>
-								<p> ${news.blurbs[i]}</p>
+								<h3> ${article.title}</h3>
+								<p> ${article.article}</p>
 							</article>`
 				return html;
 			}).join('');
@@ -63,24 +72,21 @@
 			if (!savedData.timestamp) return;
 
 			var getTimeDifference = new Date().getTime() - savedData.timestamp;
-			
+
 			return getTimeDifference  < storageTime;
 		}
 
 		function getNewsUpdate() {
-			var saved = JSON.parse(localStorage.getItem(storageId));
+			let saved = JSON.parse(localStorage.getItem(storageId));
 
-			if (!isDataValid(saved, 1000 * 60)) {
-				localStorage.removeItem(storageId);
-				getArticles();
-			}
-			else {
-				renderNews(saved);
+			if(!saved) return;
+
+			if (isDataValid(saved, 1000 * 60)) {
+				return saved.data;
 			}
 		}
 
 		getArticles();
-		getNewsUpdate();
 
 	</script>
 </body>
