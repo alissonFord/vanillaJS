@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Timer</title>
+
+	<style type="text/css">
+		body {
+			margin: 1em auto;
+			max-width: 40em;
+			text-align: center;
+			width: 88%;
+		}
+	</style>
+</head>
+<body>
+
+	<h1>Timer</h1>
+
+	<div id="app">
+		<p id="timer"></p>
+		<button run-counter-again>Run timer again</button>
+	</div>
+
+	<script>
+		const displayTimer = document.querySelector('#timer');
+		const btn_again = document.querySelector('button');
+		var timer;
+		var counter;
+
+		function runTimer() {
+			counter = 3;
+			btn_again.disabled = true;
+			timer = setInterval(countDown, 1000);
+		}
+
+		function countDown() {
+			displayTimer.innerHTML = counter;
+			counter--;
+			stopTimer();
+		}
+
+		function stopTimer() {
+			if (counter < 1) {
+				clearInterval(timer);
+				btn_again.disabled = false;
+			}
+		}
+
+		function runTimerAgain(event) {
+			if(!event.target.hasAttribute('run-counter-again')) return;
+
+			runTimer();
+		}
+
+		runTimer();
+		document.addEventListener('click', runTimerAgain);
+
+	</script>
+</body>
+</html>
